@@ -136,7 +136,12 @@ const App: React.FC = () => {
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
         body: JSON.stringify(Object.fromEntries(formData))
       });
-      if (response.ok) {
+      
+      const data = await response.json();
+      
+      // FormSubmit.co returns 200 OK when message is sent successfully
+      // Check response.ok or if data contains success field
+      if (response.ok || data.success === true) {
         setFormStatus('success');
         e.currentTarget.reset();
         setTimeout(() => setFormStatus('idle'), 5000);
@@ -144,6 +149,7 @@ const App: React.FC = () => {
         setFormStatus('error');
       }
     } catch (error) {
+      console.error('Form submission error:', error);
       setFormStatus('error');
     }
   };
@@ -377,7 +383,7 @@ const App: React.FC = () => {
                   <div>
                     <div className="flex items-center gap-3 text-indigo-600 font-extrabold text-sm uppercase tracking-widest mb-4"><Users size={18} /> Team Members</div>
                     <div className="grid grid-cols-2 gap-3">
-                      {["Rutuja Jadhav", "Jitesh Borse", "Viren Shende", "Atharv Kulkarni"].map(name => (
+                      {["Rutuja Jadhav", "Nitin Govardhane", "Viren Shende", "Atharv Kulkarni"].map(name => (
                         <div key={name} className="bg-slate-50 px-4 py-2.5 rounded-xl border border-slate-100 text-slate-700 text-sm font-semibold group-hover:bg-white group-hover:border-indigo-100 transition-colors">{name}</div>
                       ))}
                     </div>
@@ -386,7 +392,7 @@ const App: React.FC = () => {
                     <div className="flex items-center gap-3 text-purple-600 font-extrabold text-sm uppercase tracking-widest mb-4"><Star size={18} /> Mentors & Guides</div>
                     <div className="flex flex-wrap gap-3">
                       {["Dr. Jalindar Gandal Sir", "Swapnil Goje Sir"].map(name => (
-                        <div key={name} className="bg-purple-50 px-4 py-2.5 rounded-xl border border-purple-100 text-purple-700 text-sm font-semibold hover:bg-purple-600 hover:text-white transition-all">{name}</div>
+                        <div key={name} className="bg-purple-50 px-4 py-2.5 rounded-xl border border-purple-100 text-purple-700 text-sm font-semibold">{name}</div>
                       ))}
                     </div>
                   </div>
@@ -442,10 +448,10 @@ const App: React.FC = () => {
                   </div>
                   <h3 className="text-2xl font-bold text-white">Message Sent!</h3>
                   <p className="text-slate-400">Thank you, Jitesh will get back to you shortly.</p>
-                  <button onClick={() => setFormStatus('idle')} className="mt-4 text-indigo-400 font-bold hover:underline">Send another message</button>
+                  <button onClick={() => setFormStatus('idle')} className="mt-4 text-indigo-400 font-bold">Send another message</button>
                 </div>
               ) : (
-                <form onSubmit={handleFormSubmit} className="bg-white/5 p-10 rounded-[3rem] backdrop-blur-md border border-white/10 space-y-6 shadow-2xl transition-all hover:border-indigo-500/30">
+                <form onSubmit={handleFormSubmit} className="bg-white/5 p-10 rounded-[3rem] backdrop-blur-md border border-white/10 space-y-6 shadow-2xl">
                   <input type="hidden" name="_subject" value="New Portfolio Contact Submission" />
                   <input type="hidden" name="_template" value="table" />
                   <input type="hidden" name="_captcha" value="false" />
@@ -471,7 +477,7 @@ const App: React.FC = () => {
                   <button 
                     disabled={formStatus === 'loading'}
                     type="submit" 
-                    className="w-full bg-indigo-600 hover:bg-indigo-50 disabled:bg-slate-700 text-white disabled:text-slate-400 font-bold py-5 rounded-2xl shadow-xl transition-all flex items-center justify-center gap-3 text-lg group overflow-hidden relative"
+                    className="w-full bg-indigo-600 disabled:bg-slate-700 text-white disabled:text-slate-400 font-bold py-5 rounded-2xl shadow-xl flex items-center justify-center gap-3 text-lg group overflow-hidden relative"
                   >
                     {formStatus === 'loading' ? (
                       <><Loader2 className="animate-spin" size={20} /> Sending...</>
@@ -489,7 +495,12 @@ const App: React.FC = () => {
       {/* Footer */}
       <footer className="py-12 bg-slate-900 border-t border-white/5">
         <div className="max-w-6xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="text-2xl font-bold tracking-tighter text-indigo-400">JB</div>
+          <div 
+            onClick={() => scrollTo('home')} 
+            className="text-2xl font-bold tracking-tighter text-indigo-400 cursor-pointer hover:text-indigo-300 transition-colors"
+          >
+            JB
+          </div>
           <p className="text-slate-500 text-sm">© 2025 Jitesh Borse | Crafted with passion & Love.</p>
           <div className="flex gap-6">
             <a href="https://www.linkedin.com/in/jiteshborse8083/" target="_blank" rel="noopener noreferrer" className="text-slate-500 hover:text-white transition-colors">LinkedIn</a>
@@ -587,10 +598,10 @@ interface ContactInfoProps {
 
 const ContactInfo: React.FC<ContactInfoProps> = ({ icon, text, href }) => (
   <a href={href} target="_blank" rel="noopener noreferrer" className="flex items-center gap-6 group cursor-pointer">
-    <div className="p-4 bg-white/5 rounded-2xl group-hover:bg-indigo-600 group-hover:scale-110 transition-all border border-white/5">
-      {React.cloneElement(icon as React.ReactElement<any>, { size: 24, className: "text-indigo-400 group-hover:text-white transition-colors" })}
+    <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
+      {React.cloneElement(icon as React.ReactElement<any>, { size: 24, className: "text-indigo-400" })}
     </div>
-    <span className="text-slate-300 group-hover:text-white transition-all text-lg font-medium tracking-tight">{text}</span>
+    <span className="text-slate-300 text-lg font-medium tracking-tight">{text}</span>
   </a>
 );
 
