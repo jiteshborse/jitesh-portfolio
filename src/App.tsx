@@ -22,12 +22,13 @@ import {
   AlertCircle,
   Loader2,
   Home,
-  FolderDot
+  FolderDot,
+  Menu,
+  X
 } from 'lucide-react';
 
 /**
  * useScrollReveal Hook
- * Uses IntersectionObserver to trigger animations when elements enter the viewport.
  */
 const useScrollReveal = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -44,13 +45,8 @@ const useScrollReveal = () => {
     }, { threshold: 0.1 });
 
     const currentRef = domRef.current;
-    if (currentRef) {
-      observer.observe(currentRef);
-    }
-
-    return () => {
-      if (currentRef) observer.unobserve(currentRef);
-    };
+    if (currentRef) observer.observe(currentRef);
+    return () => { if (currentRef) observer.unobserve(currentRef); };
   }, []);
 
   return [domRef, isVisible] as const;
@@ -90,14 +86,13 @@ const App: React.FC = () => {
   const [scrolled, setScrolled] = useState(false);
   const [formStatus, setFormStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [activeSection, setActiveSection] = useState('home');
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
-      
-      // Update active section based on scroll
       const sections = ['about', 'skills', 'achievements', 'projects', 'contact'];
-      const scrollPos = window.scrollY + 100;
+      const scrollPos = window.scrollY + 150;
       
       for (const section of sections) {
         const element = document.getElementById(section);
@@ -110,12 +105,11 @@ const App: React.FC = () => {
     };
 
     window.addEventListener('scroll', handleScroll);
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const scrollTo = (id: string) => {
+    setIsMenuOpen(false);
     if (id === 'home') {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
@@ -129,27 +123,24 @@ const App: React.FC = () => {
   const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setFormStatus('loading');
-    const formData = new FormData(e.currentTarget);
+    const form = e.currentTarget;
+    const formData = new FormData(form);
+    
     try {
       const response = await fetch("https://formsubmit.co/ajax/jitesh.borse007@gmail.com", {
         method: "POST",
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
         body: JSON.stringify(Object.fromEntries(formData))
       });
-      
       const data = await response.json();
-      
-      // FormSubmit.co returns 200 OK when message is sent successfully
-      // Check response.ok or if data contains success field
       if (response.ok || data.success === true) {
         setFormStatus('success');
-        e.currentTarget.reset();
+        form.reset();
         setTimeout(() => setFormStatus('idle'), 5000);
       } else {
         setFormStatus('error');
       }
     } catch (error) {
-      console.error('Form submission error:', error);
       setFormStatus('error');
     }
   };
@@ -207,53 +198,79 @@ const App: React.FC = () => {
         }
       `}</style>
 
-      {/* Floating Pill Navbar */}
+      {/* Responsive Pill Navbar */}
       <div className="fixed top-5 left-0 right-0 z-50 flex justify-center px-4">
-        <nav className={`flex items-center gap-2 md:gap-3 p-2 bg-slate-900/90 backdrop-blur-xl border border-white/10 rounded-full shadow-2xl transition-all duration-500 ${scrolled ? 'scale-95' : 'scale-100'}`}>
-          {/* Logo & Brand */}
-          <div 
-            onClick={() => scrollTo('home')}
-            className="flex items-center gap-3 pl-2 pr-3.5 py-1.5 cursor-pointer border-r border-white/10"
-          >
-            <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center font-bold text-white text-[11px] ring-2 ring-white/10">
-              JB
-            </div>
-            <span className="text-white font-bold text-sm tracking-tight hidden sm:inline-block">Portfolio</span>
-          </div>
-
-          {/* Navigation Icons */}
-          <div className="flex items-center gap-1 md:gap-1.5 px-1.5">
-            {navItems.map((item) => (
-              <button
-                key={item.id}
-                onClick={() => scrollTo(item.id)}
-                className={`p-2.5 rounded-full transition-all duration-300 relative group ${
-                  activeSection === item.id 
-                  ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/20' 
-                  : 'text-slate-400 hover:text-white hover:bg-white/5'
-                }`}
-              >
-                {item.icon}
-                {/* Tooltip */}
-                <span className="absolute -bottom-10 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[9px] font-bold py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none uppercase tracking-widest border border-white/5">
-                  {item.label}
-                </span>
-              </button>
-            ))}
-          </div>
-
-          {/* Resume Link Button */}
-          <div className="pl-2 border-l border-white/10">
-            <a 
-              href="https://pdflink.to/653a8366/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-white text-slate-900 px-3.5 py-2 rounded-full text-[11px] font-bold hover:bg-indigo-500 hover:text-white transition-all shadow-sm block text-center"
+        <div className="relative w-full max-w-fit">
+          <nav className={`flex items-center gap-2 p-1.5 bg-slate-950/90 backdrop-blur-xl border border-white/10 rounded-full shadow-2xl transition-all duration-500 ${scrolled ? 'scale-95' : 'scale-100'}`}>
+            {/* Logo Section */}
+            <div 
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="flex items-center gap-2.5 pl-1.5 pr-3 py-1 cursor-pointer border-r border-white/10 group"
             >
-              Resume
-            </a>
-          </div>
-        </nav>
+              <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center font-bold text-white text-[11px] ring-2 ring-white/10 group-hover:rotate-12 transition-transform">
+                JB
+              </div>
+              <span className="text-white font-bold text-sm tracking-tight">Portfolio</span>
+              <div className="md:hidden ml-1 text-slate-400">
+                {isMenuOpen ? <X size={16} /> : <Menu size={16} />}
+              </div>
+            </div>
+
+            {/* Desktop Navigation Icons */}
+            <div className="hidden md:flex items-center gap-1 px-1.5">
+              {navItems.map((item) => (
+                <button
+                  key={item.id}
+                  onClick={() => scrollTo(item.id)}
+                  className={`p-2.5 rounded-full transition-all duration-300 relative group ${
+                    activeSection === item.id 
+                    ? 'bg-indigo-600 text-white shadow-lg' 
+                    : 'text-slate-400 hover:text-white hover:bg-white/5'
+                  }`}
+                >
+                  {item.icon}
+                  <span className="absolute -bottom-10 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[9px] font-bold py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">
+                    {item.label}
+                  </span>
+                </button>
+              ))}
+            </div>
+
+            {/* Resume Button */}
+            <div className="pl-2 border-l border-white/10">
+              <a 
+                href="https://pdflink.to/653a8366/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-white text-slate-900 px-4 py-2 rounded-full text-[11px] font-bold hover:bg-indigo-500 hover:text-white transition-all shadow-sm"
+              >
+                Resume
+              </a>
+            </div>
+          </nav>
+
+          {/* Mobile Menu Dropdown Card */}
+          {isMenuOpen && (
+            <div className="absolute top-16 left-0 w-[240px] bg-slate-950/95 backdrop-blur-2xl border border-white/10 rounded-3xl shadow-3xl p-4 md:hidden animate-in slide-in-from-top-4 duration-300">
+              <div className="flex flex-col gap-1">
+                {navItems.map((item) => (
+                  <button
+                    key={item.id}
+                    onClick={() => scrollTo(item.id)}
+                    className={`flex items-center gap-4 w-full p-3 rounded-2xl transition-all ${
+                      activeSection === item.id 
+                      ? 'bg-indigo-600/20 text-white border border-indigo-500/30' 
+                      : 'text-slate-400 hover:text-white hover:bg-white/5'
+                    }`}
+                  >
+                    <span className={activeSection === item.id ? 'text-indigo-400' : ''}>{item.icon}</span>
+                    <span className="text-sm font-bold tracking-wide">{item.label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Hero Section */}
@@ -272,7 +289,7 @@ const App: React.FC = () => {
               </p>
             </div>
             <div className="flex flex-wrap gap-5">
-              <button onClick={() => scrollTo('projects')} className="bg-indigo-600 text-white px-8 py-4 rounded-full font-bold flex items-center gap-2 hover:bg-indigo-700 hover:shadow-xl hover:shadow-indigo-100 hover:-translate-y-1 active:scale-95 transition-all group">
+              <button onClick={() => scrollTo('projects')} className="bg-indigo-600 text-white px-8 py-4 rounded-full font-bold flex items-center gap-2 hover:bg-indigo-700 hover:shadow-xl transition-all active:scale-95 group">
                 Explore Work <ChevronRight size={20} className="group-hover:translate-x-1 transition-transform" />
               </button>
               <div className="flex items-center gap-4">
@@ -284,7 +301,7 @@ const App: React.FC = () => {
           </div>
           <div className="relative group animate-in fade-in zoom-in duration-1000">
             <div className="absolute -inset-4 bg-gradient-to-tr from-indigo-500 to-purple-500 rounded-full blur-2xl opacity-20 group-hover:opacity-40 transition-opacity"></div>
-            <div className="relative w-96 h-96 md:w-[500px] md:h-[500px] rounded-full overflow-hidden border-8 border-white shadow-2xl animate-float flex-shrink-0">
+            <div className="relative w-80 h-80 md:w-[450px] md:h-[450px] rounded-full overflow-hidden border-8 border-white shadow-2xl animate-float flex-shrink-0">
               <img src="https://image2url.com/r2/default/images/1769503442599-fa607461-3407-4adb-b139-9262c38e313e.jpeg" alt="Jitesh Borse" className="w-full h-full object-cover grayscale-[10%] group-hover:grayscale-0 transition-all duration-500" />
             </div>
           </div>
@@ -391,8 +408,10 @@ const App: React.FC = () => {
                   <div>
                     <div className="flex items-center gap-3 text-purple-600 font-extrabold text-sm uppercase tracking-widest mb-4"><Star size={18} /> Mentors & Guides</div>
                     <div className="flex flex-wrap gap-3">
-                      {["Dr. Jalindar Gandal Sir", "Swapnil Goje Sir"].map(name => (
-                        <div key={name} className="bg-purple-50 px-4 py-2.5 rounded-xl border border-purple-100 text-purple-700 text-sm font-semibold">{name}</div>
+                      {["Dr. Jalindar Gandal Sir", "Dr. Swapnil Goje Sir"].map(name => (
+                        <div key={name} className="bg-purple-50 px-4 py-2.5 rounded-xl border border-purple-100 text-purple-700 text-sm font-semibold transition-all cursor-default">
+                          {name}
+                        </div>
                       ))}
                     </div>
                   </div>
@@ -409,7 +428,7 @@ const App: React.FC = () => {
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-8">
             <div className="space-y-4">
               <h2 className="text-4xl font-bold tracking-tight">Featured Projects</h2>
-              <p className="text-slate-500 max-w-md">Highlighting my technical depth through software development.</p>
+              <p className="text-slate-500 max-w-md">Highlighting my technical depth through web development.</p>
             </div>
             <div className="flex bg-slate-100/80 p-1.5 rounded-2xl backdrop-blur-sm">
               <a href="https://github.com/jiteshborse" target="_blank" rel="noopener noreferrer" className="px-6 py-2.5 rounded-xl text-sm font-bold bg-white text-indigo-600 shadow-lg shadow-indigo-100 transition-all flex items-center gap-2 hover:bg-indigo-50">All Work <Github size={16} /></a>
@@ -447,27 +466,27 @@ const App: React.FC = () => {
                     <CheckCircle2 size={32} />
                   </div>
                   <h3 className="text-2xl font-bold text-white">Message Sent!</h3>
-                  <p className="text-slate-400">Thank you, Jitesh will get back to you shortly.</p>
-                  <button onClick={() => setFormStatus('idle')} className="mt-4 text-indigo-400 font-bold">Send another message</button>
+                  <p className="text-slate-400">Thank you, I'll get back to you shortly.</p>
+                  <button onClick={() => setFormStatus('idle')} className="mt-4 text-indigo-400 font-bold hover:underline">Send another message</button>
                 </div>
               ) : (
-                <form onSubmit={handleFormSubmit} className="bg-white/5 p-10 rounded-[3rem] backdrop-blur-md border border-white/10 space-y-6 shadow-2xl">
+                <form onSubmit={handleFormSubmit} className="bg-white/5 p-10 rounded-[3rem] backdrop-blur-md border border-white/10 space-y-6 shadow-2xl transition-all hover:border-indigo-500/30 group/form">
                   <input type="hidden" name="_subject" value="New Portfolio Contact Submission" />
                   <input type="hidden" name="_template" value="table" />
                   <input type="hidden" name="_captcha" value="false" />
                   <div className="grid grid-cols-2 gap-6">
                     <div className="space-y-2">
                       <label className="text-xs font-bold uppercase tracking-widest text-slate-400">Name</label>
-                      <input required name="name" type="text" className="w-full bg-slate-800/50 border border-slate-700 rounded-2xl px-5 py-4 focus:ring-2 focus:ring-indigo-500 outline-none transition-all text-white" placeholder="Your Name" />
+                      <input required name="name" type="text" className="w-full bg-slate-800/50 border border-slate-700 rounded-2xl px-5 py-4 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all text-white hover:bg-slate-800/80" placeholder="Your Name" />
                     </div>
                     <div className="space-y-2">
                       <label className="text-xs font-bold uppercase tracking-widest text-slate-400">Email</label>
-                      <input required name="email" type="email" className="w-full bg-slate-800/50 border border-slate-700 rounded-2xl px-5 py-4 focus:ring-2 focus:ring-indigo-500 outline-none transition-all text-white" placeholder="Email" />
+                      <input required name="email" type="email" className="w-full bg-slate-800/50 border border-slate-700 rounded-2xl px-5 py-4 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all text-white hover:bg-slate-800/80" placeholder="Email" />
                     </div>
                   </div>
                   <div className="space-y-2">
                     <label className="text-xs font-bold uppercase tracking-widest text-slate-400">Message</label>
-                    <textarea required name="message" rows={4} className="w-full bg-slate-800/50 border border-slate-700 rounded-2xl px-5 py-4 focus:ring-2 focus:ring-indigo-500 outline-none transition-all resize-none text-white" placeholder="How can I help?"></textarea>
+                    <textarea required name="message" rows={4} className="w-full bg-slate-800/50 border border-slate-700 rounded-2xl px-5 py-4 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all resize-none text-white hover:bg-slate-800/80" placeholder="How can I help?"></textarea>
                   </div>
                   {formStatus === 'error' && (
                     <div className="flex items-center gap-2 text-rose-400 text-sm font-medium animate-in slide-in-from-top-2">
@@ -477,7 +496,7 @@ const App: React.FC = () => {
                   <button 
                     disabled={formStatus === 'loading'}
                     type="submit" 
-                    className="w-full bg-indigo-600 disabled:bg-slate-700 text-white disabled:text-slate-400 font-bold py-5 rounded-2xl shadow-xl flex items-center justify-center gap-3 text-lg group overflow-hidden relative"
+                    className="w-full bg-indigo-600 hover:bg-indigo-500 disabled:bg-slate-700 text-white disabled:text-slate-400 font-bold py-5 rounded-2xl shadow-xl transition-all flex items-center justify-center gap-3 text-lg group overflow-hidden relative active:scale-[0.98]"
                   >
                     {formStatus === 'loading' ? (
                       <><Loader2 className="animate-spin" size={20} /> Sending...</>
@@ -501,7 +520,7 @@ const App: React.FC = () => {
           >
             JB
           </div>
-          <p className="text-slate-500 text-sm">© 2025 Jitesh Borse | Crafted with passion & Love.</p>
+          <p className="text-slate-500 text-sm">© 2025 Jitesh Borse | Crafted with passion & love.</p>
           <div className="flex gap-6">
             <a href="https://www.linkedin.com/in/jiteshborse8083/" target="_blank" rel="noopener noreferrer" className="text-slate-500 hover:text-white transition-colors">LinkedIn</a>
             <a href="https://github.com/jiteshborse" target="_blank" rel="noopener noreferrer" className="text-slate-500 hover:text-white transition-colors">GitHub</a>
@@ -597,12 +616,12 @@ interface ContactInfoProps {
 }
 
 const ContactInfo: React.FC<ContactInfoProps> = ({ icon, text, href }) => (
-  <a href={href} target="_blank" rel="noopener noreferrer" className="flex items-center gap-6 group cursor-pointer">
-    <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
-      {React.cloneElement(icon as React.ReactElement<any>, { size: 24, className: "text-indigo-400" })}
+  <a href={href} target="_blank" rel="noopener noreferrer" className="flex items-center gap-6 group cursor-pointer transition-all duration-300">
+    <div className="p-4 bg-white/5 rounded-2xl border border-white/5 group-hover:bg-indigo-600/20 group-hover:border-indigo-500/30 transition-all duration-300">
+      {React.cloneElement(icon as React.ReactElement<any>, { size: 24, className: "text-indigo-400 group-hover:text-indigo-300 transition-colors" })}
     </div>
-    <span className="text-slate-300 text-lg font-medium tracking-tight">{text}</span>
+    <span className="text-slate-300 text-lg font-medium tracking-tight group-hover:text-white group-hover:translate-x-1 transition-all duration-300">{text}</span>
   </a>
 );
 
-export default App
+export default App;
