@@ -159,8 +159,8 @@ const App: React.FC = () => {
       title: "Converso",
       tech: ["Next.js", "Supabase", "Tailwind CSS", "Clerk"],
       desc: "Developed an AI-powered SaaS learning platform with real-time voice lessons, AI tutors, and subscription billing using Next.js and Supabase.",
-      link: "#",
-      isPrivate: true
+      link: "https://github.com/jiteshborse/converso",
+      isPrivate: false
     },
     {
       title: "Smart Inventory System",
