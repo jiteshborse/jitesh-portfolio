@@ -23,6 +23,7 @@ import {
   Loader2,
   Home,
   FolderDot,
+  Briefcase,
   Menu,
   X
 } from 'lucide-react';
@@ -91,7 +92,7 @@ const App: React.FC = () => {
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
-      const sections = ['about', 'skills', 'achievements', 'projects', 'contact'];
+      const sections = ['about', 'experience', 'skills', 'achievements', 'projects', 'contact'];
       const scrollPos = window.scrollY + 150;
       
       for (const section of sections) {
@@ -148,6 +149,7 @@ const App: React.FC = () => {
   const navItems = [
     { id: 'home', icon: <Home size={18} />, label: 'Home' },
     { id: 'about', icon: <User size={18} />, label: 'About' },
+    { id: 'experience', icon: <Briefcase size={18} />, label: 'Experience' },
     { id: 'skills', icon: <Code2 size={18} />, label: 'Skills' },
     { id: 'achievements', icon: <Trophy size={18} />, label: 'Awards' },
     { id: 'projects', icon: <FolderDot size={18} />, label: 'Work' },
@@ -351,6 +353,66 @@ const App: React.FC = () => {
                 <p className="text-slate-600 leading-relaxed text-lg">
                   Recently, I secured <span className="font-bold text-slate-900">3rd place</span> among 90 teams at <span className="italic">HackMIT'25 IDEATHON</span> and won the 1st Appreciation Prize, gaining valuable experience in teamwork and problem-solving.
                 </p>
+              </div>
+            </div>
+          </div>
+        </RevealSection>
+      </section>
+
+      {/* Experience Section */}
+      <section id="experience" className="py-24 bg-slate-50">
+        <RevealSection className="max-w-6xl mx-auto px-4">
+          <div className="flex flex-col items-center mb-16">
+            <h2 className="text-4xl font-bold mb-4 tracking-tight">Experience</h2>
+            <div className="h-1.5 w-16 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-full"></div>
+          </div>
+          <div className="max-w-4xl mx-auto">
+            <div className="group bg-white border-2 border-slate-100 rounded-[2.5rem] p-8 md:p-12 hover:border-indigo-100 hover:shadow-2xl hover:shadow-indigo-50 transition-all duration-500 relative overflow-hidden">
+              <div className="absolute top-0 right-0 p-10 opacity-5 group-hover:opacity-10 translate-x-6 -translate-y-2 transition-opacity">
+                <Briefcase size={180} className="text-indigo-600" />
+              </div>
+              <div className="relative space-y-8">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                  <div className="flex items-center gap-5">
+                    <div className="p-4 bg-indigo-50 text-indigo-600 rounded-3xl group-hover:scale-110 transition-transform shadow-sm">
+                      <Briefcase size={32} />
+                    </div>
+                    <div>
+                      <h3 className="text-2xl md:text-3xl font-extrabold text-slate-900 group-hover:text-indigo-600 transition-colors">LLM Post Training Intern</h3>
+                      <div className="text-slate-600 font-semibold">Ethara AI · Internship</div>
+                      <div className="flex flex-wrap items-center gap-3 mt-2 text-slate-500 font-semibold text-sm">
+                        <span>Feb 2026 - May 2026</span>
+                        <span className="w-1.5 h-1.5 rounded-full bg-slate-300"></span>
+                        <span>Gurugram, Haryana, India</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <ul className="space-y-4 text-slate-600 text-lg leading-relaxed list-disc pl-6">
+                  <li>Working on advanced AI/ML solutions focused on Large Language Models (LLMs).</li>
+                  <li>Contributing to pipelines for Reinforcement Learning from Human Feedback (RLHF) and Supervised Fine-Tuning (SFT).</li>
+                  <li>Assisting in the optimization and processing of training datasets to improve model accuracy and performance.</li>
+                </ul>
+
+                <div>
+                  <div className="flex items-center gap-3 text-indigo-600 font-extrabold text-xs uppercase tracking-widest mb-4">
+                    <Star size={16} /> Key Skills
+                  </div>
+                  <div className="flex flex-wrap gap-3">
+                    {[
+                      "Large Language Models (LLM)",
+                      "RLHF",
+                      "Supervised Fine-Tuning (SFT)",
+                      "Generative AI",
+                      "Data Labeling"
+                    ].map(skill => (
+                      <span key={skill} className="bg-slate-50 px-4 py-2 rounded-xl border border-slate-100 text-slate-700 text-sm font-semibold group-hover:bg-white group-hover:border-indigo-100 transition-colors">
+                        {skill}
+                      </span>
+                    ))}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
