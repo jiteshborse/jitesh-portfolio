@@ -366,7 +366,57 @@ const App: React.FC = () => {
             <h2 className="text-4xl font-bold mb-4 tracking-tight">Experience</h2>
             <div className="h-1.5 w-16 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-full"></div>
           </div>
-          <div className="max-w-4xl mx-auto">
+          <div className="max-w-4xl mx-auto space-y-8">
+            {/* HashedBit Innovations */}
+            <div className="group bg-white border-2 border-slate-100 rounded-[2.5rem] p-8 md:p-12 hover:border-indigo-100 hover:shadow-2xl hover:shadow-indigo-50 transition-all duration-500 relative overflow-hidden">
+              <div className="absolute top-0 right-0 p-10 opacity-5 group-hover:opacity-10 translate-x-6 -translate-y-2 transition-opacity">
+                <Briefcase size={180} className="text-indigo-600" />
+              </div>
+              <div className="relative space-y-8">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                  <div className="flex items-center gap-5">
+                    <div className="p-4 bg-indigo-50 text-indigo-600 rounded-3xl group-hover:scale-110 transition-transform shadow-sm">
+                      <Briefcase size={32} />
+                    </div>
+                    <div>
+                      <h3 className="text-2xl md:text-3xl font-extrabold text-slate-900 group-hover:text-indigo-600 transition-colors">Software Developer Intern</h3>
+                      <div className="text-slate-600 font-semibold">HashedBit Innovations Pvt. Ltd. · Internship</div>
+                      <div className="flex flex-wrap items-center gap-3 mt-2 text-slate-500 font-semibold text-sm">
+                        <span>Feb 2026 – June 2026</span>
+                        <span className="w-1.5 h-1.5 rounded-full bg-slate-300"></span>
+                        <span>Gurugram, India (Remote)</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <ul className="space-y-4 text-slate-600 text-lg leading-relaxed list-disc pl-6">
+                  <li>Contributed to the development and enhancement of a full-stack restaurant management platform, focusing on user experience, feature implementation, and application performance.</li>
+                  <li>Collaborated on API integration, database management, and system optimization to deliver scalable and reliable web solutions in an Agile environment.</li>
+                </ul>
+
+                <div>
+                  <div className="flex items-center gap-3 text-indigo-600 font-extrabold text-xs uppercase tracking-widest mb-4">
+                    <Star size={16} /> Key Skills
+                  </div>
+                  <div className="flex flex-wrap gap-3">
+                    {[
+                      "ReactJS",
+                      "Express",
+                      "NodeJS",
+                      "Tailwind CSS",
+                      "Jira"
+                    ].map(skill => (
+                      <span key={skill} className="bg-slate-50 px-4 py-2 rounded-xl border border-slate-100 text-slate-700 text-sm font-semibold group-hover:bg-white group-hover:border-indigo-100 transition-colors">
+                        {skill}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Ethara AI */}
             <div className="group bg-white border-2 border-slate-100 rounded-[2.5rem] p-8 md:p-12 hover:border-indigo-100 hover:shadow-2xl hover:shadow-indigo-50 transition-all duration-500 relative overflow-hidden">
               <div className="absolute top-0 right-0 p-10 opacity-5 group-hover:opacity-10 translate-x-6 -translate-y-2 transition-opacity">
                 <Briefcase size={180} className="text-indigo-600" />
@@ -390,8 +440,7 @@ const App: React.FC = () => {
                 </div>
 
                 <ul className="space-y-4 text-slate-600 text-lg leading-relaxed list-disc pl-6">
-                  <li>Working on advanced AI/ML solutions focused on Large Language Models (LLMs).</li>
-                  <li>Contributing to pipelines for Reinforcement Learning from Human Feedback (RLHF) and Supervised Fine-Tuning (SFT).</li>
+                  <li>Contributing to pipelines for Reinforcement Learning from Human Feedback (RLHF) and Supervised Fine-Tuning (SFT) and also work on EVALS projects.</li>
                   <li>Assisting in the optimization and processing of training datasets to improve model accuracy and performance.</li>
                 </ul>
 
